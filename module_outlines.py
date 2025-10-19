@@ -110,7 +110,7 @@ Responsibilities:
     - Visualize data (Histogram, Line Plot)
     - Perform simple query (single condition)
 
-Child1(Parent1)
+Child1_1(Parent1)
 Purpose:
     CSV Reader and advanced visualizer.
 Responsibilities:
@@ -125,7 +125,7 @@ Responsibilities:
     - Vector operations: unit, projection, orthogonality
     - Probability operations: joint, conditional, summary
 
-Child2(Parent2)
+Child2_1(Parent2)
 Purpose:
     Pickle Reader with probability, vector, and categorical analysis.
 Responsibilities:
@@ -157,3 +157,4 @@ if __name__ == "__main__":
     
 
     main()
+
