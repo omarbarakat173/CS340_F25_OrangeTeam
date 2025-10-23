@@ -101,39 +101,69 @@ Responsibilities:
 '''
 
 #Class definitions Start Here
-'''
-Parent1
-Purpose:
-    Provide base methods for CSV-based data analysis.
-Responsibilities:
-    - Store configuration constants (optionally from Config.py)
-    - Visualize data (Histogram, Line Plot)
-    - Perform simple query (single condition)
+#parent class 1.1 - product catalog
+class ProductCatalog:
+    def __init__(self, config):
+        # Initialize config and product storage
+        pass
+    
+    def query_product(self, column, value):
+        # Return products matching simple condition
+        pass
+    
+    def visualize_price_distribution(self):
+        # Simple histogram or line plot for product prices
+        pass
+        
+# Child Class 1.1: CSVProductCatalog (inherits ProductCatalog)
+class CSVProductCatalog(ProductCatalog):
+    def load_products(self, filepath=None):
+        # Load product data from CSV file into internal storage
+        pass
+    
+    def visualize_advanced(self):
+        # Create violin plots, boxplots, scatter plots of products
+        pass
+    
+    def query_products_multi(self, **kwargs):
+        # Query products with multiple conditions using boolean indexing
+        pass
 
-Child1_1(Parent1)
-Purpose:
-    CSV Reader and advanced visualizer.
-Responsibilities:
-    - Read CSV into DataFrame
-    - Query with Boolean indexing (numeric + string)
-    - Violin, Box, and Scatter plots
+# Parent Class 2: ShoppingCart
+class ShoppingCart:
+    def __init__(self, config):
+        # Initialize config and cart storage (product IDs and quantities)
+        pass
+    
+    def add_item(self, product_id, quantity=1):
+        # Add item(s) to cart
+        pass
+    
+    def remove_item(self, product_id, quantity=1):
+        # Remove item(s) from cart
+        pass
+    
+    def calculate_total(self, products_df):
+        # Calculate subtotal, tax, discount, final total
+        pass
+    
+    def export_cart_csv(self, products_df, filepath):
+        # Export cart contents to CSV file
+        pass
 
-Parent2
-Purpose:
-    Base class for vector and probability computations.
-Responsibilities:
-    - Vector operations: unit, projection, orthogonality
-    - Probability operations: joint, conditional, summary
-
-Child2_1(Parent2)
-Purpose:
-    Pickle Reader with probability, vector, and categorical analysis.
-Responsibilities:
-    - Read Pickle into DataFrame/dict
-    - Compute joint/conditional probabilities
-    - Compute vector operations (dot, angle, projection)
-    - Handle categorical attributes (unique, permutations, combinations)
-'''
+# Child Class 2.1: PickleShoppingCart (inherits ShoppingCart)
+class PickleShoppingCart(ShoppingCart):
+    def save_cart(self, filepath=None):
+        # Save cart data to a pickle file
+        pass
+    
+    def load_cart(self, filepath=None):
+        # Load cart data from a pickle file
+        pass
+    
+    def calculate_statistics(self, products_df):
+        # Calculate mean, median, std of prices in cart
+        pass
 
 #Function definitions Start Here
 def main():
@@ -157,4 +187,5 @@ if __name__ == "__main__":
     
 
     main()
+
 
