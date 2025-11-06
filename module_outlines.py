@@ -101,7 +101,7 @@ Responsibilities:
 '''
 
 #Class definitions Start Here
-#parent class 1.1 - product catalog
+#parent class 1 - product catalog
 class ProductCatalog:
     def __init__(self, config):
         # Initialize config and product storage
@@ -187,5 +187,6 @@ if __name__ == "__main__":
     
 
     main()
+
 
 
