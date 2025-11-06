@@ -131,7 +131,7 @@ class CSVProductCatalog(ProductCatalog):
 
 # Parent Class 2: ShoppingCart
 class ShoppingCart:
-    def __init__(self, config):
+    def __init__(self, config="config.py"):
         # Initialize config and cart storage (product IDs and quantities)
         pass
     
@@ -187,6 +187,7 @@ if __name__ == "__main__":
     
 
     main()
+
 
 
 
