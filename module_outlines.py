@@ -131,13 +131,16 @@ class CSVProductCatalog(ProductCatalog):
 
 # Parent Class 2: ShoppingCart
 class ShoppingCart:
-    def __init__(self, config):
-        # Initialize config and cart storage (product IDs and quantities)
-        pass
+    def __init__(self):
+        # Initialize cart storage (product IDs and quantities)
+        self.items = {}
     
     def add_item(self, product_id, quantity=1):
         # Add item(s) to cart
-        pass
+        if product_id in self.items:
+            self.items[product_id] += quantity
+        else:
+            self.items[product_id] = quantity
     
     def remove_item(self, product_id, quantity=1):
         # Remove item(s) from cart
@@ -187,6 +190,7 @@ if __name__ == "__main__":
     
 
     main()
+
 
 
 
