@@ -1,9 +1,9 @@
 from Config import config
 from logger import log_progress, log_error
-from ProductCatalog import ProductCatalog
-from CSVProductCatalog import CSVProductCatalog
-from ShoppingCart import ShoppingCart
-from PickleShoppingCart import PickleShoppingCart
+from parent_class1 import ProductCatalog
+from child_class1_1 import CSVProductCatalog
+from parent_class2 import ShoppingCart
+from child_class2_1 import PickleShoppingCart
 import os
 import ui
 
