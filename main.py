@@ -11,7 +11,7 @@ def main():
     log_progress("Program started.")
 
     try:
-        config = Config()
+        config = config()
         catalog = CSVProductCatalog(config)
         cart = PickleShoppingCart()
 
