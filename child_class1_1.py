@@ -1,39 +1,93 @@
-# Child Class 1.1: PickleShoppingCart (inherits ShoppingCart)
-class PickleShoppingCart(ShoppingCart):
-    def save_cart(self, filepath=None):
-        if filepath is None:
-            filepath = "cart.pkl"
-        with open(filepath, 'wb') as f:
-            pickle.dump(self.items, f)
-            print(f"Cart saved to {filepath}")
-        pass
-    
-    def load_cart(self, filepath=None):
-         if filepath is None:
-            filepath = "cart.pkl"
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from Config import config
+from logger import log_progress, log_error
+from parent_class1 import ProductCatalog
+
+
+class CSVProductCatalog(ProductCatalog):
+    def __init__(self, cfg=None):
+        super().__init__()
+        self.config = cfg if cfg else config()
+
+    def load_products(self, filepath=None):
         try:
-            with open(filepath, 'rb') as f:
-                self.items = pickle.load(f)
-            print(f"Cart loaded from {filepath}")
+            filepath = filepath or self.config.PRODUCT_CSV_PATH
+            self.products = pd.read_csv(filepath)
+            log_progress(f"Loaded products from {filepath}")
         except FileNotFoundError:
-            print(f"No file found at {filepath}". Starting with empty cart.")
-                  self.items = {}
-        pass
-    
-    def calculate_statistics(self, products_df):
-        prices = []
-       for product_id, quantity in self.items.items()
-       product_row = products_df.loc[products_df['products_id']==product_id]
-       if product_row.empty:
-        continue
-        price = float(product_row['price'].values[0])
-            prices.extend([price]*quantity)
-            if not prices:
-            return{"mean":0,"median":0,"std":0}
-        stats = {
-            "mean": round(np.mean(prices),2)
-            "median": round(np.median(prices),2)
-            "std": round(np.std(prices),2)
-        }
-        return stats
-        pass
+            log_error(f"CSV file not found: {filepath}")
+        except Exception as e:
+            log_error(f"Error loading CSV file: {e}")
+
+    def visualize_advanced(self):
+        try:
+            if self.products.empty:
+                log_error("No products loaded for advanced visualization.")
+                return
+
+            numeric_cols = self.products.select_dtypes(include='number').columns
+
+            if len(numeric_cols) == 0:
+                log_error("No numeric columns available for visualization.")
+                return
+
+            plt.figure(figsize=(12, 8))
+            sns.violinplot(data=self.products[numeric_cols])
+            plt.title("Violin Plot of Product Data")
+            plt.tight_layout()
+            plt.savefig(f"{self.config.OUTPUT_FOLDER}/violin_plot.png")
+            plt.close()
+            log_progress("Saved violin plot to Output folder.")
+
+            plt.figure(figsize=(12, 8))
+            sns.boxplot(data=self.products[numeric_cols])
+            plt.title("Box Plot of Product Data")
+            plt.tight_layout()
+            plt.savefig(f"{self.config.OUTPUT_FOLDER}/box_plot.png")
+            plt.close()
+            log_progress("Saved box plot to Output folder.")
+
+            if len(numeric_cols) >= 2:
+                plt.figure(figsize=(8, 6))
+                sns.scatterplot(
+                    data=self.products,
+                    x=numeric_cols[0],
+                    y=numeric_cols[1]
+                )
+                plt.title(f"Scatter Plot: {numeric_cols[0]} vs {numeric_cols[1]}")
+                plt.tight_layout()
+                plt.savefig(f"{self.config.OUTPUT_FOLDER}/scatter_plot.png")
+                plt.close()
+                log_progress("Saved scatter plot to Output folder.")
+            else:
+                log_error("Not enough numeric columns for scatter plot.")
+
+        except Exception as e:
+            log_error(f"Error during advanced visualization: {e}")
+
+    def query_products_multi(self, **kwargs):
+        try:
+            if self.products.empty:
+                log_error("No products loaded for querying.")
+                return pd.DataFrame()
+
+            condition = pd.Series(True, index=self.products.index)
+
+            for column, value in kwargs.items():
+                if column not in self.products.columns:
+                    log_error(f"Invalid column for query: {column}")
+                    return pd.DataFrame()
+                if isinstance(value, (list, tuple, set)):
+                    condition &= self.products[column].isin(value)
+                else:
+                    condition &= self.products[column] == value
+
+            results = self.products[condition]
+            log_progress(f"Multi-condition query executed with {len(results)} results.")
+            return results
+
+        except Exception as e:
+            log_error(f"Error in query_products_multi: {e}")
+            return pd.DataFrame()
