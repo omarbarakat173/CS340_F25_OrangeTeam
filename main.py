@@ -1,6 +1,9 @@
 from Config import config
 from logger import log_progress, log_error
-from Classes import *
+from ProductCatalog import ProductCatalog
+from CSVProductCatalog import CSVProductCatalog
+from ShoppingCart import ShoppingCart
+from PickleShoppingCart import PickleShoppingCart
 import os
 import ui
 
