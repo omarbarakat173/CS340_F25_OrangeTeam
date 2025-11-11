@@ -55,7 +55,7 @@ def main():
     """Test the UI menu"""
     display_menu()
     choice = get_user_choice()
-    show_message(f"You chose option {choice}")
+    print(f"You chose option {choice}")
 
 #%% SELF-RUN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
