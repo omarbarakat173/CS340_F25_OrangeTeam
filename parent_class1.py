@@ -20,31 +20,30 @@ Notes:
 
 
 # custom imports
+from Config import config
 import pandas as pd
 import matplotlib.pyplot as plt
-from Config import config
+from logger import log_error, log_progress
 
 class ProductCatalog:
-    def __init__(self):
-        # Initialize config and product storage
-        self.config = config()
+    def __init__(self, cfg=None):
+        self.config = cfg if cfg else config()
         self.products = pd.DataFrame()
     
     def query_product(self, column, value):
-        # Return products matching simple condition
         if column in self.products.columns:
             return self.products[self.products[column] == value]
         else:
-            print("Column not found.")
+            log_error(f"Column not found in products: {column}")
             return pd.DataFrame()
     
     def visualize_price_distribution(self):
-        # Simple histogram for product prices
         if "price" in self.products.columns:
             plt.hist(self.products["price"])
-            plt.title("Product Price Distribution")
+            plt.title(f"Product Price Distribution ({self.config.CURRENCY})")
             plt.xlabel(f"Price ({self.config.CURRENCY})")
             plt.ylabel("Count")
             plt.show()
+            log_progress("Displayed product price distribution.")
         else:
-            print("Error: 'price' column not found.")
+            log_error("Error: 'price' column not found for visualization.")
