@@ -1,4 +1,4 @@
-# Child Class 2.1: PickleShoppingCart (inherits ShoppingCart)
+# Child Class 1.1: PickleShoppingCart (inherits ShoppingCart)
 class PickleShoppingCart(ShoppingCart):
     def save_cart(self, filepath=None):
         # Save cart data to a pickle file
