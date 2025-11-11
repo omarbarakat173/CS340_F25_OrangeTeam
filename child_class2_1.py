@@ -1,4 +1,4 @@
-# Child Class 1.1: CSVProductCatalog (inherits ProductCatalog)
+# Child Class 2.1: CSVProductCatalog (inherits ProductCatalog)
 class CSVProductCatalog(ProductCatalog):
     def load_products(self, filepath=None):
         # Load product data from CSV file into internal storage
