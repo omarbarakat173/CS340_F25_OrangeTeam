@@ -1,9 +1,8 @@
-# Child Class 2.1: PickleShoppingCart (inherits ShoppingCart)
-# Paste this into child_class2_1.py (same folder/package as parent_class2.py)
 import os
 import pickle
 import numpy as np
 import pandas as pd
+from typing import Optional, List
 
 from parent_class2 import ShoppingCart
 from logger import log_error, log_progress
@@ -20,7 +19,7 @@ class PickleShoppingCart(ShoppingCart):
       products_df contains columns: product_id, price (case-insensitive accepted)
     """
 
-    def save_cart(self, filepath: str | None = None) -> str:
+    def save_cart(self, filepath: Optional[str] = None) -> str:
         """
         Save ONLY the cart items dict (self.items) to a pickle file.
         Returns the path used.
@@ -39,7 +38,7 @@ class PickleShoppingCart(ShoppingCart):
             log_error(f"Error saving cart to {filepath}: {e}")
             raise
 
-    def load_cart(self, filepath: str | None = None) -> "PickleShoppingCart":
+    def load_cart(self, filepath: Optional[str] = None) -> "PickleShoppingCart":
         """
         Load cart items from a pickle file into self.items. Returns self.
         If file is missing, starts with an empty cart and logs a progress message.
@@ -64,7 +63,6 @@ class PickleShoppingCart(ShoppingCart):
             return self
         except Exception as e:
             log_error(f"Error loading cart from {filepath}: {e}")
-            # Keep cart usable; default to empty on failure
             self.items = {}
             return self
 
@@ -89,11 +87,10 @@ class PickleShoppingCart(ShoppingCart):
             if "product_id" not in df.columns or "price" not in df.columns:
                 raise ValueError("products_df must include 'product_id' and 'price' columns.")
 
-            prices: list[float] = []
+            prices: List[float] = []
 
             # Iterate items in the cart
             for product_id, qty in self.items.items():
-                # sanitize qty
                 try:
                     qty = int(qty)
                 except Exception:
@@ -115,7 +112,6 @@ class PickleShoppingCart(ShoppingCart):
             arr = np.asarray(prices, dtype=float)
             mean = float(np.mean(arr))
             median = float(np.median(arr))
-            # Population std (ddof=0). Use ddof=1 for sample std if required by rubric.
             std = float(np.std(arr, ddof=0))
 
             stats = {
@@ -129,4 +125,3 @@ class PickleShoppingCart(ShoppingCart):
         except Exception as e:
             log_error(f"Error calculating statistics: {e}")
             return {"mean": 0.0, "median": 0.0, "std": 0.0}
-```
