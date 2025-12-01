@@ -11,37 +11,36 @@ def main():
     log_progress("Program started.")
 
     try:
-        config = config()
-        catalog = CSVProductCatalog(config)
+        cfg = config()
+        catalog = CSVProductCatalog(cfg)
         cart = PickleShoppingCart()
+        cart.load_cart(cfg.CART_PICKLE_PATH)
 
-        # Load products at start
-        if os.path.exists(config.PRODUCT_CSV_PATH):
-            catalog.load_products(config.PRODUCT_CSV_PATH)
-            log_progress(f"Loaded products from {config.PRODUCT_CSV_PATH}")
+        if os.path.exists(cfg.PRODUCT_CSV_PATH):
+            catalog.load_products(cfg.PRODUCT_CSV_PATH)
+            log_progress(f"Loaded products from {cfg.PRODUCT_CSV_PATH}")
         else:
-            log_error(f"Product CSV not found: {config.PRODUCT_CSV_PATH}")
+            log_error(f"Product CSV not found: {cfg.PRODUCT_CSV_PATH}")
 
         while True:
             ui.display_menu()
             choice = ui.get_user_choice()
 
-            if choice == "1":  # View all products
+            if choice == "1":
                 ui.show_products(catalog.products)
                 log_progress("Viewed all products.")
 
-            elif choice == "2":  # Search for a product
+            elif choice == "2":
                 term = ui.get_input("Enter product name to search: ")
                 results = catalog.query_product("name", term)
                 ui.show_products(results)
                 log_progress(f"Searched for product: {term}")
 
-            elif choice == "3":  # Show price graph
+            elif choice == "3":
                 catalog.visualize_price_distribution()
                 log_progress("Displayed price distribution.")
 
-            elif choice == "4":  # View cart
-                # Build a display-friendly list
+            elif choice == "4":
                 items = []
                 for product_id, qty in cart.items.items():
                     product_row = catalog.products.loc[catalog.products['product_id'] == product_id]
@@ -54,18 +53,20 @@ def main():
                 ui.show_cart(items)
                 log_progress("Viewed cart contents.")
 
-            elif choice == "5":  # Add product to cart
+            elif choice == "5":
                 pid = ui.get_input("Enter product ID: ")
                 qty = int(ui.get_input("Enter quantity: "))
                 cart.add_item(pid, qty)
+                cart.save_cart(cfg.CART_PICKLE_PATH)
                 log_progress(f"Added product {pid} x{qty} to cart.")
 
-            elif choice == "6":  # Checkout / calculate totals
+            elif choice == "6":
                 totals = cart.calculate_total(catalog.products)
                 print("Checkout Totals:", totals)
                 log_progress(f"Checkout performed. Totals: {totals}")
 
-            elif choice == "7":  # Exit
+            elif choice == "7":
+                cart.save_cart(cfg.CART_PICKLE_PATH)
                 log_progress("Exited program.")
                 break
 
