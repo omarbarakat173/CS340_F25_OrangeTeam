@@ -81,4 +81,3 @@ class ShoppingCart:
             log_progress(f"Exported cart to CSV: {filepath}")
         except Exception as e:
             log_error(f"Error exporting cart to CSV: {e}")
-
