@@ -1,14 +1,13 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 from Config import config
 from logger import log_progress, log_error
 from parent_class1 import ProductCatalog
-
+import matplotlib.pyplot as plt
 
 class CSVProductCatalog(ProductCatalog):
     def __init__(self, cfg=None):
-        super().__init__()
+        super().__init__(cfg if cfg else config())
         self.config = cfg if cfg else config()
 
     def load_products(self, filepath=None):
@@ -91,3 +90,4 @@ class CSVProductCatalog(ProductCatalog):
         except Exception as e:
             log_error(f"Error in query_products_multi: {e}")
             return pd.DataFrame()
+
