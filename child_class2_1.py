@@ -2,6 +2,7 @@ import os
 import pickle
 import numpy as np
 import pandas as pd
+import math
 from typing import Optional, List
 
 from parent_class2 import ShoppingCart
@@ -125,3 +126,71 @@ class PickleShoppingCart(ShoppingCart):
         except Exception as e:
             log_error(f"Error calculating statistics: {e}")
             return {"mean": 0.0, "median": 0.0, "std": 0.0}
+
+
+    def position_vector(self, p1, p2):
+        """    
+        Treat two product attribute lists (like price, rating, weight)
+        as points and show how much they differ. Compares features of product A vs product B.
+        """
+        return [p2[i] - p1[i] for i in range(len(p1))]
+
+    def unit_vector(self, v):
+        """Return unit vector of v."""
+        length = sum(x*x for x in v) ** 0.5
+        if length == 0:
+            return v
+        return [x / length for x in v]
+
+    def dot_product(self, v1, v2):
+        """        
+        Compare similarity between two product feature vectors.
+        Higher dot product = more similar products.
+        
+        """
+        return sum(v1[i] * v2[i] for i in range(len(v1)))
+
+    def projection(self, a, b):
+        """Show how much of product A's features align with product B's features."""
+        dot_ab = self.dot_product(a, b)
+        dot_bb = self.dot_product(b, b)
+        if dot_bb == 0:
+            return [0]*len(b)
+        scale = dot_ab / dot_bb
+        return [scale * x for x in b]
+
+    def angle_between(self, v1, v2):
+        """
+        Return how different two products are based on their features.
+        Angle near 0° = very similar.
+        Angle near 90° = totally different.
+        """
+        dot = self.dot_product(v1, v2)
+        len1 = sum(x*x for x in v1) ** 0.5
+        len2 = sum(x*x for x in v2) ** 0.5
+        if len1 == 0 or len2 == 0:
+            return 0
+        cos_theta = dot / (len1 * len2)
+        cos_theta = max(-1, min(1, cos_theta))
+        return math.degrees(math.acos(cos_theta))
+
+    def is_orthogonal(self, v1, v2):
+    
+        """Check if two products share similarity in their features."""
+        return self.dot_product(v1, v2) == 0
+    
+    def display_vector(self, v):
+        """Print the vector."""
+        print("Vector:", v)
+
+    def export_vector(self, v, filepath="data/vector.txt"):
+        """Export the vector"""
+        try:
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            with open(filepath, "w") as f:
+                f.write(str(v))
+            print("Exported vector to", filepath)
+            return filepath
+        except Exception as e:
+            print("Export error:", e)
+            return ""
