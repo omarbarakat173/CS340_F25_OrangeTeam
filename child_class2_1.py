@@ -194,3 +194,42 @@ class PickleShoppingCart(ShoppingCart):
         except Exception as e:
             print("Export error:", e)
             return ""
+
+    def obtain_unique(self, values):
+        """
+        Return the unique categorical values.
+        """
+        try:
+            uniques = list(dict.fromkeys(values))
+            print("Unique values:", uniques)
+            return uniques
+        except Exception as e:
+            print("Error obtaining unique values:", e)
+            return []
+
+    def generate_permutations(self, values, r=None):
+        """
+        Generate permutations of categorical values.
+        """
+        try:
+            uniques = self.categorical_unique(values)
+            r = r or len(uniques)
+            perms = list(itertools.permutations(uniques, r))
+            print(f"Permutations (r={r}):", perms)
+            return perms
+        except Exception as e:
+            print("Error generating permutations:", e)
+            return []
+
+    def generate_combinations(self, values, r):
+        """
+        Generate combinations (no order) of categorical values.
+        """
+        try:
+            uniques = self.categorical_unique(values)
+            combs = list(itertools.combinations(uniques, r))
+            print(f"Combinations (r={r}):", combs)
+            return combs
+        except Exception as e:
+            print("Error generating combinations:", e)
+            return []
