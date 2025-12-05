@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 import pandas as pd
 import math
+import itertools
 from typing import Optional, List
 
 from parent_class2 import ShoppingCart
