@@ -212,7 +212,7 @@ class PickleShoppingCart(ShoppingCart):
         Generate permutations of categorical values.
         """
         try:
-            uniques = self.categorical_unique(values)
+            uniques = self.obtain_unique(values)
             r = r or len(uniques)
             perms = list(itertools.permutations(uniques, r))
             print(f"Permutations (r={r}):", perms)
@@ -226,7 +226,7 @@ class PickleShoppingCart(ShoppingCart):
         Generate combinations (no order) of categorical values.
         """
         try:
-            uniques = self.categorical_unique(values)
+            uniques = self.obtain_unique(values)
             combs = list(itertools.combinations(uniques, r))
             print(f"Combinations (r={r}):", combs)
             return combs
