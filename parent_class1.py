@@ -47,3 +47,15 @@ class ProductCatalog:
             log_progress("Displayed product price distribution.")
         else:
             log_error("Error: 'price' column not found for visualization.")
+    def visualize_price_lineplot(self):
+        if "price" in self.products.columns:
+            plt.plot(self.products["price"].values)
+            plt.title(f"Price Line Plot ({self.config.CURRENCY})")
+            plt.xlabel("Index")
+            plt.ylabel(f"Price ({self.config.CURRENCY})")
+            plt.show()
+            log_progress("Displayed product price line plot.")
+        else:
+            log_error("Error: 'price' column not found for line plot visualization.")
+
+
