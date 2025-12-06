@@ -5,7 +5,7 @@ import pandas as pd
 import math
 import itertools
 from typing import Optional, List
-
+from Config import config
 from parent_class2 import ShoppingCart
 from logger import log_error, log_progress
 
@@ -24,11 +24,11 @@ class PickleShoppingCart(ShoppingCart):
     def save_cart(self, filepath: Optional[str] = None) -> str:
         """
         Save ONLY the cart items dict (self.items) to a pickle file.
-        Returns the path used.
         """
         try:
             if filepath is None:
-                filepath = os.path.join("data", "cart.pkl")
+                filepath = config.CART_PICKLE_PATH
+
             os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True)
 
             with open(filepath, "wb") as f:
@@ -42,12 +42,11 @@ class PickleShoppingCart(ShoppingCart):
 
     def load_cart(self, filepath: Optional[str] = None) -> "PickleShoppingCart":
         """
-        Load cart items from a pickle file into self.items. Returns self.
-        If file is missing, starts with an empty cart and logs a progress message.
+        Load cart items from pickle file.
         """
         try:
             if filepath is None:
-                filepath = os.path.join("data", "cart.pkl")
+                filepath = config.CART_PICKLE_PATH
 
             if not os.path.exists(filepath):
                 log_progress(f"No file found at {filepath}. Starting with empty cart.")
@@ -63,6 +62,7 @@ class PickleShoppingCart(ShoppingCart):
             self.items = loaded
             log_progress(f"Cart loaded from {filepath}")
             return self
+
         except Exception as e:
             log_error(f"Error loading cart from {filepath}: {e}")
             self.items = {}
@@ -128,6 +128,97 @@ class PickleShoppingCart(ShoppingCart):
             log_error(f"Error calculating statistics: {e}")
             return {"mean": 0.0, "median": 0.0, "std": 0.0}
 
+    def joint_counts(self, df: pd.DataFrame, col1: str, col2: str) -> pd.DataFrame:
+        """
+        Return joint counts of two categorical attributes.
+        """
+        try:
+            table = pd.crosstab(df[col1], df[col2])
+            print("Joint Counts:\n", table)
+            return table
+        except Exception as e:
+            print("Error computing joint counts:", e)
+            return pd.DataFrame()
+
+    def joint_probabilities(self, df: pd.DataFrame, col1: str, col2: str) -> pd.DataFrame:
+        """
+        Return joint probabilities of two categorical attributes.
+        """
+        try:
+            table = pd.crosstab(df[col1], df[col2], normalize=True)
+            print("Joint Probabilities:\n", table)
+            return table
+        except Exception as e:
+            print("Error computing joint probabilities:", e)
+            return pd.DataFrame()
+
+    def conditional_probabilities(self, df: pd.DataFrame, col_condition: str, col_outcome: str) -> pd.DataFrame:
+        """
+        Computes conditional probability distribution of outcome given condition.
+        """
+        try:
+            table = pd.crosstab(df[col_condition], df[col_outcome], normalize="index")
+            print(f"Conditional Probabilities P({col_outcome} | {col_condition}):\n", table)
+            return table
+        except Exception as e:
+            print("Error computing conditional probabilities:", e)
+            return pd.DataFrame()
+
+    def export_probability_table(self, table: pd.DataFrame, filename="probabilities.csv") -> str:
+        """
+        Export a probability/count table
+        """
+        try:
+            filepath = os.path.join(config.OUTPUT_FOLDER, filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+            table.to_csv(filepath)
+            print("Exported probability table to:", filepath)
+            return filepath
+        except Exception as e:
+            print("Error exporting probability table:", e)
+            return ""
+
+    def visualize_price_distribution(self, products_df: pd.DataFrame):
+        """
+        Histogram of product prices.
+        """
+        try:
+            import matplotlib.pyplot as plt
+
+            df = products_df.copy()
+            df.columns = [c.lower() for c in df.columns]
+
+            if "price" not in df.columns:
+                print("Price column missing; cannot visualize.")
+                return
+
+            plt.hist(df["price"])
+            plt.title("Price Distribution")
+            plt.xlabel("Price")
+            plt.ylabel("Frequency")
+            plt.show()
+
+        except Exception as e:
+            print("Visualization error:", e)
+
+    def visualize_joint_counts(self, df: pd.DataFrame, col1: str, col2: str):
+        """
+        Bar chart of joint counts.
+        """
+        try:
+            import matplotlib.pyplot as plt
+
+            table = pd.crosstab(df[col1], df[col2])
+            table.plot(kind="bar")
+
+            plt.title(f"Joint Counts of {col1} and {col2}")
+            plt.xlabel(col1)
+            plt.ylabel("Count")
+            plt.show()
+
+        except Exception as e:
+            print("Visualization error:", e)
 
     def position_vector(self, p1, p2):
         """    
@@ -184,14 +275,20 @@ class PickleShoppingCart(ShoppingCart):
         """Print the vector."""
         print("Vector:", v)
 
-    def export_vector(self, v, filepath="data/vector.txt"):
-        """Export the vector"""
+    def export_vector(self, v, filepath=None):
+        """Export the vector to Output folder."""
         try:
+            if filepath is None:
+                filepath = os.path.join(config.OUTPUT_FOLDER, "vector.txt")
+
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
             with open(filepath, "w") as f:
                 f.write(str(v))
+
             print("Exported vector to", filepath)
             return filepath
+
         except Exception as e:
             print("Export error:", e)
             return ""
