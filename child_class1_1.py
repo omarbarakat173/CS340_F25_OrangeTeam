@@ -9,14 +9,14 @@ class CSVProductCatalog(ProductCatalog):
     def __init__(self, cfg=None):
         super().__init__(cfg if cfg else config())
         self.config = cfg if cfg else config()
-
-    def load_products(self, filepath=None):
+        
+    def load_products(self, *filepath):
         try:
-            filepath = filepath or self.config.PRODUCT_CSV_PATH
-            self.products = pd.read_csv(filepath)
-            log_progress(f"Loaded products from {filepath}")
+            final_path = filepath[0] if filepath else self.config.PRODUCT_CSV_PATH
+            self.products = pd.read_csv(final_path)
+            log_progress(f"Loaded products from {final_path}")
         except FileNotFoundError:
-            log_error(f"CSV file not found: {filepath}")
+            log_error(f"CSV file not found: {final_path}")
         except Exception as e:
             log_error(f"Error loading CSV file: {e}")
 
