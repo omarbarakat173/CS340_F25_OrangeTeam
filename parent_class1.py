@@ -22,8 +22,10 @@ Notes:
 # custom imports
 from Config import config
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from logger import log_error, log_progress
+
 
 class ProductCatalog:
     def __init__(self, cfg=None):
@@ -59,3 +61,13 @@ class ProductCatalog:
             log_error("Error: 'price' column not found for line plot visualization.")
 
 
+    def numpy_to_dataframe(self, array, columns=None):
+        try:
+            arr = np.asarray(array)
+            df = pd.DataFrame(arr, columns=columns)
+            log_progress(f"Converted NumPy array of shape {arr.shape} into DataFrame.")
+        return df
+
+    except Exception as e:
+        log_error(f"Error converting NumPy array to DataFrame: {e}")
+        return pd.DataFrame()
