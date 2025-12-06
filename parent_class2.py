@@ -41,6 +41,8 @@ class ShoppingCart:
         global subtotal
         total_tax = 0
         total_discount = 0
+        line_total = lambda price, qty: price * qty
+
         try:
             for product_id, qty in self._items.items():
                 product_row = products_df.loc[products_df['product_id'] == product_id]
@@ -50,11 +52,19 @@ class ShoppingCart:
                 price = float(product_row['price'].values[0])
                 tax_rate = float(product_row['tax_rate'].values[0]) if 'tax_rate' in product_row.columns else 0
                 discount = float(product_row['discount'].values[0]) if 'discount' in product_row.columns else 0
-                subtotal += price * qty
-                total_tax += (price * qty) * tax_rate
-                total_discount += (price * qty) * discount
-            final_total = subtotal + total_tax - total_discount
-            log_progress(f"Calculated cart total: {final_total}")
+                base_amount = line_total(price, qty)
+
+                tax_expr = f"{base_amount} * {tax_rate}"
+                discount_expr = f"{base_amount} * {discount}"
+
+                item_tax = eval(tax_expr)
+                item_discount = eval(discount_expr)
+
+                subtotal += base_amount
+                total_tax += item_tax
+                total_discount += item_discount
+                final_total = subtotal + total_tax - total_discount
+                log_progress(f"Calculated cart total: {final_total}")
             return {
                 "subtotal": round(subtotal, 2),
                 "tax": round(total_tax, 2),
